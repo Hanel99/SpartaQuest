@@ -393,11 +393,42 @@ Transform:
   m_GameObject: {fileID: 393804911}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6, y: -3.22, z: 0}
+  m_LocalPosition: {x: 7, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1524754161756929040}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &405285017
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 405285018}
+  m_Layer: 0
+  m_Name: Zombies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &405285018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 405285017}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &449695412
 PrefabInstance:
@@ -1227,6 +1258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourceData: {fileID: 11400000, guid: 8aa3d64d752ad3449910608165f6aad6, type: 2}
   spawnPoint: {fileID: 393804912}
+  zombieParent: {fileID: 405285018}
   zombies: []
 --- !u!4 &1777779504
 Transform:
@@ -1986,5 +2018,6 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 679450420}
   - {fileID: 1489341059}
+  - {fileID: 405285018}
   - {fileID: 1524754161756929040}
   - {fileID: 1777779504}
