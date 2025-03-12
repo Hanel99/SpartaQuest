@@ -33,11 +33,26 @@ public class InGameManager : MonoBehaviour
     void Start()
     {
 
+        for (int i = 0; i < 10; i++)
+        {
+            SpawnZombie();
+        }
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+
+
+    public void SpawnZombie()
+    {
+        // GameObject zombie = resourceData.zombiePrefab.Spawn(spawnPoint.position, Quaternion.identity);
+
+        GameObject zombie = Instantiate(resourceData.zombiePrefab, spawnPoint.position, Quaternion.identity);
+        zombies.Add(zombie.GetComponent<Zombie>());
     }
 }

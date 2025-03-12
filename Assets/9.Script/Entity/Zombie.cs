@@ -29,6 +29,12 @@ public class Zombie : MonoBehaviour
     }
 
 
+    void OnDestroy()
+    {
+        InGameManager.instance.zombies.Remove(this);
+    }
+
+
 
 
 }
