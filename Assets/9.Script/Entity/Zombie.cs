@@ -39,6 +39,9 @@ public class Zombie : MonoBehaviour
         upCollider = transform.Find("Up").GetComponent<BoxCollider2D>();
         beforePosition = transform.position;
         stateChangeCoroutine = null;
+
+
+
     }
 
     void Update()
@@ -94,6 +97,7 @@ public class Zombie : MonoBehaviour
     private void FixedUpdate()
     {
         rb.velocity = new Vector2(-1 * speed, rb.velocity.y);
+        // rb.AddForce(Vector2.left * speed);
     }
     void Jump()
     {
@@ -103,6 +107,9 @@ public class Zombie : MonoBehaviour
         zombieState = ZombieState.Jump;
         rb.AddForce(Vector2.up * jumpPower);
 
+        // speed = 3f;
+        // rb.mass = 1f;
+        // rb.gravityScale = 1f;
         StateChange(ZombieState.Move, 1f);
     }
 
@@ -115,27 +122,71 @@ public class Zombie : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
         zombieState = afterState;
+        // speed = 3f;
+        // rb.mass = 5f;
     }
 
 
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log($"@@@ {this.name} trigger enter -> {other.name}");
-        if (other.name.Contains("Zombie"))
+        Debug.Log($"@@@ {this.name} trigger enter -> {collision.name}");
+        if (collision.gameObject.CompareTag("Zombie"))
         {
+            // rb.mass = 1f;
             Jump();
         }
-        else if (other.name.Contains("Box"))
+        else if (collision.gameObject.CompareTag("Hero"))
         {
-            speed = 0f;
+            speed = 0.1f;
+            // rb.mass = 1f;
         }
     }
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
+    // void OnTriggerExit2D(Collider2D other)
+    // {
+    //     speed = 4f;
+    //     rb.mass = 5f;
+    // }
 
-    }
+
+
+    // void OnCollisionEnter2D(Collision2D collision)
+    // {
+    //     if (collision.gameObject.CompareTag("Zombie"))
+    //     {
+    //         Debug.Log($"{this.name} Zombie");
+
+    //         speed = 0.5f;
+    //         rb.mass = 0.1f;
+    //         Jump();
+    //     }
+    //     else if (collision.gameObject.CompareTag("Border"))
+    //     {
+    //         Debug.Log($"{this.name} border ");
+
+    //         speed = 3f;
+    //         rb.mass = 1f;
+    //         rb.gravityScale = 1f;
+    //         // Jump();
+    //     }
+    //     else if (collision.gameObject.CompareTag("Hero"))
+    //     {
+    //         Debug.Log($"{this.name} hero");
+
+    //         speed = -1f;
+    //         rb.mass = 0.1f;
+    //         rb.gravityScale = 0.1f;
+    //     }
+
+
+    // }
+
+    // void OnCollisionExit2D(Collision2D collision)
+    // {
+    //     speed = 5f;
+    //     rb.mass = 1f;
+    // }
 
 
 }
