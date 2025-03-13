@@ -36,12 +36,9 @@ public class Zombie : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         frontCollider = transform.Find("Front").GetComponent<BoxCollider2D>();
-        upCollider = transform.Find("Up").GetComponent<BoxCollider2D>();
+        // upCollider = transform.Find("Up").GetComponent<BoxCollider2D>();
         beforePosition = transform.position;
         stateChangeCoroutine = null;
-
-
-
     }
 
     void Update()
@@ -50,6 +47,7 @@ public class Zombie : MonoBehaviour
         if (tempTime > checkTime)
         {
             tempTime = 0f;
+            CheckTrigger();
             // UpdateSpeed();
         }
 
@@ -62,6 +60,28 @@ public class Zombie : MonoBehaviour
             // Jump();
             // UpdateSpeed();
             // CheckForZombieInFront();
+        }
+    }
+
+
+    void CheckTrigger()
+    {
+        // Debug.Log("@@@ Check trigger");
+        StartCoroutine(Co_CheckTrigger());
+    }
+
+    IEnumerator Co_CheckTrigger()
+    {
+        frontCollider.gameObject.SetActive(false);
+        yield return new WaitForSeconds(0.1f);
+        frontCollider.gameObject.SetActive(true);
+    }
+
+    public void FrontTriggerEvent(GameObject obj)
+    {
+        if (obj.CompareTag("Zombie"))
+        {
+            Jump();
         }
     }
 
@@ -97,7 +117,10 @@ public class Zombie : MonoBehaviour
     private void FixedUpdate()
     {
         rb.velocity = new Vector2(-1 * speed, rb.velocity.y);
-        // rb.AddForce(Vector2.left * speed);
+
+        Debug.Log($"@@@ {this.name} localposition y : {transform.localPosition.y} -> {1 + 7 * (transform.localPosition.y + 3.39f)}");
+        rb.mass = 1f + 10f * (transform.localPosition.y + 3.39f);
+        jumpPower = 450f + 5000f * (transform.localPosition.y + 3.39f);
     }
     void Jump()
     {
@@ -109,7 +132,6 @@ public class Zombie : MonoBehaviour
 
         // speed = 3f;
         // rb.mass = 1f;
-        // rb.gravityScale = 1f;
         StateChange(ZombieState.Move, 1f);
     }
 
@@ -167,7 +189,6 @@ public class Zombie : MonoBehaviour
 
     //         speed = 3f;
     //         rb.mass = 1f;
-    //         rb.gravityScale = 1f;
     //         // Jump();
     //     }
     //     else if (collision.gameObject.CompareTag("Hero"))
@@ -176,7 +197,6 @@ public class Zombie : MonoBehaviour
 
     //         speed = -1f;
     //         rb.mass = 0.1f;
-    //         rb.gravityScale = 0.1f;
     //     }
 
 
