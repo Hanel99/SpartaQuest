@@ -118,9 +118,9 @@ public class Zombie : MonoBehaviour
     {
         rb.velocity = new Vector2(-1 * speed, rb.velocity.y);
 
-        Debug.Log($"@@@ {this.name} localposition y : {transform.localPosition.y} -> {1 + 7 * (transform.localPosition.y + 3.39f)}");
-        rb.mass = 1f + 10f * (transform.localPosition.y + 3.39f);
-        jumpPower = 450f + 5000f * (transform.localPosition.y + 3.39f);
+        // Debug.Log($"@@@ {this.name} localposition y : {transform.localPosition.y} -> {1 + 7 * (transform.localPosition.y + 3.39f)}");
+        rb.mass = Mathf.Max(1f, 1f + 20f * (transform.localPosition.y + 3.39f));
+        jumpPower = Mathf.Max(450f, 450f + 8000f * (transform.localPosition.y + 3.39f));
     }
     void Jump()
     {
@@ -152,15 +152,18 @@ public class Zombie : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log($"@@@ {this.name} trigger enter -> {collision.name}");
+        // Debug.Log($"@@@ {this.name} trigger enter -> {collision.name}");
         if (collision.gameObject.CompareTag("Zombie"))
         {
             // rb.mass = 1f;
             Jump();
         }
-        else if (collision.gameObject.CompareTag("Hero"))
+        else if (collision.gameObject.CompareTag("Hero") && transform.localPosition.y > 0)
         {
-            speed = 0.1f;
+            Debug.Log($"@@@ {this.name} trigger enter -> {collision.name}");
+            rb.AddForce(Vector2.left * Vector2.down * jumpPower);
+
+            // speed = 0.1f;
             // rb.mass = 1f;
         }
     }
