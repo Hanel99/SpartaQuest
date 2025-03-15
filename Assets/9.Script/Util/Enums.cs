@@ -14,3 +14,17 @@ public enum ZombieState
     Attack,
     Die,
 }
+
+
+public enum HeroType
+{
+    Hero,
+    Box,
+}
+
+public enum HeroState
+{
+    Idle,
+    Attack,
+    Die,
+}

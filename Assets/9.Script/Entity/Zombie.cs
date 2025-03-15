@@ -16,15 +16,12 @@ public class Zombie : MonoBehaviour
 
     // private
     Rigidbody2D rb;
-    Collider2D frontCollider;
-    Collider2D upCollider;
+    Collider2D frontCollider; //앞 오브젝트가 뭔지 판단할 콜라이더
 
 
-    float realSpeed = 0f;
-    Vector3 beforePosition;
     Coroutine stateChangeCoroutine;
-    float tempTime = 0f;
-    float checkTime = 0.5f;
+    float tempTime = 0f; //타이머
+    float colliderCheckTime = 0.5f; //콜라이더 체크 기준 시간
 
 
 
@@ -36,37 +33,65 @@ public class Zombie : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         frontCollider = transform.Find("Front").GetComponent<BoxCollider2D>();
-        // upCollider = transform.Find("Up").GetComponent<BoxCollider2D>();
-        beforePosition = transform.position;
         stateChangeCoroutine = null;
     }
 
     void Update()
     {
         tempTime += Time.deltaTime;
-        if (tempTime > checkTime)
+        if (tempTime > colliderCheckTime)
         {
             tempTime = 0f;
             CheckTrigger();
-            // UpdateSpeed();
-        }
-
-
-        if (zombieState == ZombieState.Move)
-        {
-            // CheckMovement();
-            // beforePosition = transform.position;
-
-            // Jump();
-            // UpdateSpeed();
-            // CheckForZombieInFront();
         }
     }
 
+    private void FixedUpdate()
+    {
+        rb.velocity = new Vector2(-1 * speed, rb.velocity.y);
+
+        rb.mass = Mathf.Max(1f, 1f + 20f * (transform.localPosition.y + 3.39f));
+        jumpPower = Mathf.Max(450f, 450f + 8000f * (transform.localPosition.y + 3.39f));
+    }
+
+    void OnDestroy()
+    {
+        InGameManager.instance.zombies.Remove(this);
+    }
+
+
+
+
+
+    void StateChange(ZombieState afterState, float duration)
+    {
+        stateChangeCoroutine = StartCoroutine(Co_StateChange(afterState, duration));
+    }
+    IEnumerator Co_StateChange(ZombieState afterState, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        zombieState = afterState;
+    }
+
+    void Jump()
+    {
+        if (zombieState != ZombieState.Move)
+            return;
+
+        zombieState = ZombieState.Jump;
+        rb.AddForce(Vector2.up * jumpPower);
+
+        StateChange(ZombieState.Move, 1f);
+    }
+
+
+
+
+
+    #region  트리거 이벤트
 
     void CheckTrigger()
     {
-        // Debug.Log("@@@ Check trigger");
         StartCoroutine(Co_CheckTrigger());
     }
 
@@ -85,131 +110,37 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    // void UpdateSpeed()
-    // {
-    //     realSpeed = Mathf.Abs(transform.position.x - beforePosition.x);
-    //     beforePosition = transform.position;
-
-    //     Debug.Log($"{this.name} speed : {realSpeed}");
-
-    //     if (realSpeed < 1f)
-    //     {
-    //         Jump();
-    //     }
-    // }
-
-    // void CheckForZombieInFront()
-    // {
-    //     RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.left, 1f);
-    //     if (hit.collider != null && hit.collider.name.Contains("Zombie"))
-    //     {
-    //         Jump();
-    //     }
-    // }
-
-    void OnDestroy()
-    {
-        InGameManager.instance.zombies.Remove(this);
-    }
-
-
-
-    private void FixedUpdate()
-    {
-        rb.velocity = new Vector2(-1 * speed, rb.velocity.y);
-
-        // Debug.Log($"@@@ {this.name} localposition y : {transform.localPosition.y} -> {1 + 7 * (transform.localPosition.y + 3.39f)}");
-        rb.mass = Mathf.Max(1f, 1f + 20f * (transform.localPosition.y + 3.39f));
-        jumpPower = Mathf.Max(450f, 450f + 8000f * (transform.localPosition.y + 3.39f));
-    }
-    void Jump()
-    {
-        if (zombieState != ZombieState.Move)
-            return;
-
-        zombieState = ZombieState.Jump;
-        rb.AddForce(Vector2.up * jumpPower);
-
-        // speed = 3f;
-        // rb.mass = 1f;
-        StateChange(ZombieState.Move, 1f);
-    }
-
-
-    void StateChange(ZombieState afterState, float duration)
-    {
-        stateChangeCoroutine = StartCoroutine(Co_StateChange(ZombieState.Move, 1f));
-    }
-    IEnumerator Co_StateChange(ZombieState afterState, float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        zombieState = afterState;
-        // speed = 3f;
-        // rb.mass = 5f;
-    }
-
 
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Debug.Log($"@@@ {this.name} trigger enter -> {collision.name}");
         if (collision.gameObject.CompareTag("Zombie"))
         {
-            // rb.mass = 1f;
+            speed = 5f;
             Jump();
         }
         else if (collision.gameObject.CompareTag("Hero") && transform.localPosition.y > 0)
         {
-            Debug.Log($"@@@ {this.name} trigger enter -> {collision.name}");
-            rb.AddForce(Vector2.left * Vector2.down * jumpPower);
-
-            // speed = 0.1f;
-            // rb.mass = 1f;
+            rb.AddForce(Vector2.down * jumpPower);
         }
     }
 
-    // void OnTriggerExit2D(Collider2D other)
-    // {
-    //     speed = 4f;
-    //     rb.mass = 5f;
-    // }
 
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Border"))
+            return;
 
+        if (zombieState != ZombieState.Move)
+            return;
 
-    // void OnCollisionEnter2D(Collision2D collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Zombie"))
-    //     {
-    //         Debug.Log($"{this.name} Zombie");
+        speed = 0.5f;
+    }
 
-    //         speed = 0.5f;
-    //         rb.mass = 0.1f;
-    //         Jump();
-    //     }
-    //     else if (collision.gameObject.CompareTag("Border"))
-    //     {
-    //         Debug.Log($"{this.name} border ");
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        speed = 5f;
+    }
 
-    //         speed = 3f;
-    //         rb.mass = 1f;
-    //         // Jump();
-    //     }
-    //     else if (collision.gameObject.CompareTag("Hero"))
-    //     {
-    //         Debug.Log($"{this.name} hero");
-
-    //         speed = -1f;
-    //         rb.mass = 0.1f;
-    //     }
-
-
-    // }
-
-    // void OnCollisionExit2D(Collision2D collision)
-    // {
-    //     speed = 5f;
-    //     rb.mass = 1f;
-    // }
-
-
+    #endregion
 }
