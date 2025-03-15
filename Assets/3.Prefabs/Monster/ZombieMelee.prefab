@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1174570720321624928}
   - component: {fileID: 7016750400611631704}
+  - component: {fileID: -2219403748310206397}
   - component: {fileID: 2530438000798545554}
   - component: {fileID: 5166879859535777833}
   - component: {fileID: -6521555657727992893}
-  - component: {fileID: -2219403748310206397}
   m_Layer: 0
   m_Name: ZombieMelee
   m_TagString: Zombie
@@ -60,6 +60,23 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-2219403748310206397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319310827380095937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8056843de9e45e4c8ecbf7de6eb0634, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hp: 100
+  attackDamage: 10
+  zombieState: 1
+  speed: 5
+  jumpPower: 450
 --- !u!50 &2530438000798545554
 Rigidbody2D:
   serializedVersion: 4
@@ -141,23 +158,6 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
---- !u!114 &-2219403748310206397
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 319310827380095937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8056843de9e45e4c8ecbf7de6eb0634, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hp: 100
-  attackDamage: 10
-  zombieState: 1
-  speed: 5
-  jumpPower: 450
 --- !u!1 &728025491598780179
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,6 +6,7 @@ public class Border : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D other)
     {
-        Destroy(other.gameObject);
+        if (other.gameObject.CompareTag("Zombie"))
+            Destroy(other.gameObject);
     }
 }

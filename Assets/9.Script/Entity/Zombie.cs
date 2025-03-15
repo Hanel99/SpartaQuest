@@ -63,13 +63,32 @@ public class Zombie : MonoBehaviour
 
 
 
-    void StateChange(ZombieState afterState, float duration)
+    void StateChange(ZombieState afterState, float duration = 0f)
     {
-        stateChangeCoroutine = StartCoroutine(Co_StateChange(afterState, duration));
+        switch (afterState)
+        {
+            case ZombieState.Move:
+                if (zombieState == ZombieState.Die)
+                    return;
+                stateChangeCoroutine = StartCoroutine(Co_StateChange(afterState, duration));
+                break;
+
+            case ZombieState.Jump:
+                if (zombieState != ZombieState.Move)
+                    return;
+                stateChangeCoroutine = StartCoroutine(Co_StateChange(afterState, duration));
+
+                break;
+            case ZombieState.Die:
+                stateChangeCoroutine = StartCoroutine(Co_StateChange(afterState, duration));
+                break;
+        }
     }
+
     IEnumerator Co_StateChange(ZombieState afterState, float duration)
     {
-        yield return new WaitForSeconds(duration);
+        if (duration > 0) yield return new WaitForSeconds(duration);
+
         zombieState = afterState;
     }
 
@@ -78,10 +97,27 @@ public class Zombie : MonoBehaviour
         if (zombieState != ZombieState.Move)
             return;
 
-        zombieState = ZombieState.Jump;
+        StateChange(ZombieState.Jump);
         rb.AddForce(Vector2.up * jumpPower);
 
+        //원래 이렇게 하면 안되는데... 착지 시점을 알면 시전해야 함
         StateChange(ZombieState.Move, 1f);
+    }
+
+
+    public void Die()
+    {
+        StateChange(ZombieState.Die);
+
+        // 죽는 시퀀스 실행
+        Destroy(gameObject);
+    }
+
+    public void Damage(float damage)
+    {
+        hp -= damage;
+        if (hp <= 0)
+            Die();
     }
 
 
@@ -102,11 +138,16 @@ public class Zombie : MonoBehaviour
         frontCollider.gameObject.SetActive(true);
     }
 
-    public void FrontTriggerEvent(GameObject obj)
+    public void FrontTriggerEvent(GameObject collision)
     {
-        if (obj.CompareTag("Zombie"))
+        if (collision.CompareTag("Zombie"))
         {
             Jump();
+        }
+        else if (collision.gameObject.CompareTag("Hero") && transform.localPosition.y <= 0)
+        {
+            // 벽에 붙어있는 아래에 있는 좀비는 뒤로 물러나도록 함
+            rb.AddForce(Vector2.right * jumpPower);
         }
     }
 
@@ -121,6 +162,7 @@ public class Zombie : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Hero") && transform.localPosition.y > 0)
         {
+            // 일정 위치 이상으로 올라갔을 경우 아래로 내려오는 힘을 가함        
             rb.AddForce(Vector2.down * jumpPower);
         }
     }

@@ -15,8 +15,10 @@ public class InGameManager : MonoBehaviour
     public Transform zombieParent;
     public List<Zombie> zombies = new List<Zombie>();
 
-    float spawnTime = 1f;
+    float spawnTime = 0.9f;
     float tempTime = 0f;
+
+    int zombieCount = 0;
 
 
     void Awake()
@@ -51,16 +53,20 @@ public class InGameManager : MonoBehaviour
     }
 
 
-    int temp = 0;
+
 
     public void SpawnZombie()
     {
         // 풀링은 여유되면...
         // GameObject zombie = resourceData.zombiePrefab.Spawn(spawnPoint.position, Quaternion.identity);
 
+        if (zombies.Count > 50)
+            return;
+
+
         GameObject zombie = Instantiate(resourceData.zombiePrefab, spawnPoint.position, Quaternion.identity, zombieParent);
-        zombie.name = $"Zombie{temp}";
+        zombie.name = $"Zombie{zombieCount}";
         zombies.Add(zombie.GetComponent<Zombie>());
-        temp++;
+        zombieCount++;
     }
 }
